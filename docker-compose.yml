@@ -1,0 +1,73 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15.1-bullseye
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+    depends_on:
+      - spark-master
+
+  spark-master:
+    image: pyspark-cluster
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    volumes:
+      - pyspark-apps:/opt/spark-apps
+      - pyspark-data:/opt/spark-data
+    environment:
+      - SPARK_LOCAL_IP=spark-master
+      - SPARK_WORKLOAD=master
+
+  spark-worker-a:
+    image: pyspark-cluster
+    ports:
+      - "9091:8080"
+      - "7000:7000"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-a
+    volumes:
+      - pyspark-apps:/opt/spark-apps
+      - pyspark-data:/opt/spark-data
+
+  spark-worker-b:
+    image: pyspark-cluster
+    ports:
+      - "9092:8080"
+      - "7001:7000"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+      - SPARK_LOCAL_IP=spark-worker-b
+    volumes:
+      - pyspark-apps:/opt/spark-apps
+      - pyspark-data:/opt/spark-data
+
+
+volumes:
+  db:
+    driver: local
+  pyspark-apps:
+    driver: local
+  pyspark-data:
+    driver: local

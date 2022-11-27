@@ -1,0 +1,4 @@
+setuptools==65.5.0  # virtualenv 20.16.7
+wheel==0.38.4
+flake8
+mypy
