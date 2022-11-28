@@ -1,6 +1,11 @@
-PYTHON_BIN := /usr/bin/python3
+PYTHON_BIN := python3
+PIP := pip
 
+APP_NAME := sparkling-snakes-processor
 PACKAGE_DIR_NAME := sparkling_snakes
+
+DOCKER_COMPOSE := docker-compose -f
+DOCKER_COMPOSE_FILE := docker-compose.yml
 
 VENV := venv
 
@@ -16,11 +21,14 @@ build: clean_build venv
 	$(PYTHON_BIN) setup.py sdist
 	$(PYTHON_BIN) setup.py bdist_wheel
 
+install:
+	$(PIP) install ./dist/sparkling_snakes*.whl --force-reinstall
+
+run:
+	uvicorn sparkling_snakes.main:app --reload --host 0.0.0.0
+
 test: venv
 	# TODO: Add basic unit tests
-
-coverage: venv
-	# TODO: Add basic coverage
 
 lint: venv
 	mypy ./$(PACKAGE_DIR_NAME) --strict
@@ -31,7 +39,7 @@ clean: clean_build clean_pyc clean_venv
 	rm -rf .mypy_cache
 
 clean_build:
-	rm -rf build dist
+	rm -rf build dist || true
 
 clean_pyc:
 	find . -type f -name '*.pyc' -delete
@@ -39,7 +47,7 @@ clean_pyc:
 clean_venv:
 	rm -rf $(VENV)
 
-docker_build: docker_build_pyspark
+docker_build: docker_build_pyspark docker_build_sparkling_snakes
 
 docker_build_pyspark:
 	docker build -f dockerfiles/pyspark/Dockerfile -t pyspark-cluster .
@@ -48,9 +56,15 @@ docker_build_sparkling_snakes:
 	docker build -f dockerfiles/sparkling_snakes/Dockerfile -t sparkling-snakes-processor .
 
 docker_up:
-	docker-compose -f docker-compose.yml up -d
+	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE) up -d
+
+docker_up_sparkling_snakes:
+	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE) up -d processor
+
+docker_down_sparkling_snakes:
+	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE) stop processor
 
 docker_down:
-	docker-compose -f docker-compose.yml down
+	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE) down
 
-.PHONY: all venv build test coverage lint clean clean_build clean_pyc clean_venv docker_build docker_build_pyspark docker_up docker_down
+.PHONY: all venv build install run test lint clean clean_build clean_pyc clean_venv docker_build docker_build_pyspark docker_build_sparkling_snakes docker_up docker_up_sparkling_snakes docker_down_sparkling_snakes docker_down
