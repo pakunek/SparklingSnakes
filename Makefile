@@ -11,15 +11,18 @@ VENV := venv
 
 all: venv
 
-$(VENV)/bin/activate: requirements-venv.txt
+$(VENV)/bin/activate: requirements-env.txt
 	$(PYTHON_BIN) -m venv $(VENV)
-	./$(VENV)/bin/pip install -r requirements-venv.txt
+	./$(VENV)/bin/pip install -r requirements-env.txt
 
 venv: $(VENV)/bin/activate
 
-build: clean_build venv
+build: clean_build
 	$(PYTHON_BIN) setup.py sdist
 	$(PYTHON_BIN) setup.py bdist_wheel
+
+install_env:
+	$(PIP) install -r requirements-env.txt
 
 install:
 	$(PIP) install ./dist/sparkling_snakes*.whl --force-reinstall

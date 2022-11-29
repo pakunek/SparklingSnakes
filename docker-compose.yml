@@ -13,7 +13,7 @@ services:
     volumes:
       - processor:/opt/processor-data
   db:
-    image: postgres:15.1-bullseye
+    image: postgres:15.1
     restart: always
     environment:
       - POSTGRES_USER=postgres

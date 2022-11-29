@@ -1,0 +1,2 @@
+[spark]
+master_uri = "spark://spark-master:7077"

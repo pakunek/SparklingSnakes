@@ -1,7 +1,7 @@
 # SparklingSnakes
 
 File metadata processor application. Used technology:
- - Python 3.11
+ - Python 3.9
  - PySpark 3.3.1
  - PostgreSQL 15.1
 

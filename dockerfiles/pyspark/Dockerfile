@@ -1,13 +1,12 @@
-FROM openjdk:11.0.11-jre-slim-buster as builder
+FROM python:3.9 as builder
 
-RUN apt-get update && apt-get install -y curl vim wget software-properties-common ssh net-tools ca-certificates python3 python3-pip python3-numpy python3-matplotlib python3-scipy python3-pandas python3-simpy
-RUN update-alternatives --install "/usr/bin/python" "python" "$(which python3)" 1
+RUN apt update
+RUN apt install -y openjdk-11-jdk-headless
 
-
-ENV SPARK_VERSION=3.3.1 \
-HADOOP_VERSION=3 \
-SPARK_HOME=/opt/spark \
-PYTHONHASHSEED=1
+ENV SPARK_VERSION=3.3.1
+ENV HADOOP_VERSION=3
+ENV SPARK_HOME=/opt/spark
+ENV PYTHONHASHSEED=1
 
 RUN wget --no-verbose -O apache-spark.tgz "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" \
 && mkdir -p /opt/spark \
@@ -19,15 +18,15 @@ FROM builder as apache-spark
 
 WORKDIR /opt/spark
 
-ENV SPARK_MASTER_PORT=7077 \
-SPARK_MASTER_WEBUI_PORT=8080 \
-SPARK_LOG_DIR=/opt/spark/logs \
-SPARK_MASTER_LOG=/opt/spark/logs/spark-master.out \
-SPARK_WORKER_LOG=/opt/spark/logs/spark-worker.out \
-SPARK_WORKER_WEBUI_PORT=8080 \
-SPARK_WORKER_PORT=7000 \
-SPARK_MASTER="spark://spark-master:7077" \
-SPARK_WORKLOAD="master"
+ENV SPARK_MASTER_PORT=7077
+ENV SPARK_MASTER_WEBUI_PORT=8080
+ENV SPARK_LOG_DIR=/opt/spark/logs
+ENV SPARK_MASTER_LOG=/opt/spark/logs/spark-master.out
+ENV SPARK_WORKER_LOG=/opt/spark/logs/spark-worker.out
+ENV SPARK_WORKER_WEBUI_PORT=8080
+ENV SPARK_WORKER_PORT=7000
+ENV SPARK_MASTER="spark://spark-master:7077"
+ENV SPARK_WORKLOAD="master"
 
 EXPOSE 8080 7077 6066
 
