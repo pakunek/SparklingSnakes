@@ -34,8 +34,8 @@ test: venv
 	# TODO: Add basic unit tests
 
 lint: venv
-	mypy ./$(PACKAGE_DIR_NAME) --strict
 	flake8 ./$(PACKAGE_DIR_NAME) ./test
+	mypy ./$(PACKAGE_DIR_NAME) --strict
 
 clean: clean_build clean_pyc clean_venv
 	rm -rf $(PACKAGE_DIR_NAME).egg-info

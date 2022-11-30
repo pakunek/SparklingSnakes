@@ -1,4 +1,4 @@
-FROM python:3.9 as builder
+FROM python:3.9
 
 RUN apt update
 RUN apt install -y openjdk-11-jdk-headless
@@ -12,9 +12,6 @@ RUN wget --no-verbose -O apache-spark.tgz "https://archive.apache.org/dist/spark
 && mkdir -p /opt/spark \
 && tar -xf apache-spark.tgz -C /opt/spark --strip-components=1 \
 && rm apache-spark.tgz
-
-
-FROM builder as apache-spark
 
 WORKDIR /opt/spark
 

@@ -1,24 +1,18 @@
 from fastapi import FastAPI
-from sparkling_snakes.api import models
+
+from sparkling_snakes.api.routes.api import router
+from sparkling_snakes.consts import API_PREFIX
 from sparkling_snakes.helpers.app_config import AppConfigHelper
-from sparkling_snakes.helpers.pyspark import PySparkHelper
-
-config_helper = AppConfigHelper()
-config_helper.configure_logging()
-pyspark_helper = PySparkHelper(config_helper)
-pyspark_helper.connect_to_cluster()
-
-app = FastAPI(docs_url="/docs")
+from sparkling_snakes.helpers.app_logging import AppLoggingHelper
 
 
-@app.post("/processor/tasks/")
-async def post_processor_task(task: models.NewTask) -> dict[str, str]:
-    """POST method for /processor/tasks/ endpoint.
+def get_application() -> FastAPI:
+    config_helper: AppConfigHelper = AppConfigHelper()
+    AppLoggingHelper.configure_logging(config_helper.get_config())
 
-    :param task: NewTask class instance
-    :return: simple message with input presentation (temporary)
-    :raises: HTTPException with 400 status code if the Task is invalid
-    """
-    task.validate_data()
-    return {"message": f"Calculations complete, primes for given range are: "
-                       f"{pyspark_helper.test_cluster_operation_primes_from_range(task.n)}"}
+    application: FastAPI = FastAPI(docs_url="/docs")
+    application.include_router(router, prefix=API_PREFIX)
+    return application
+
+
+app: FastAPI = get_application()

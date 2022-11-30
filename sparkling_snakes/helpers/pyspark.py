@@ -1,25 +1,29 @@
+from typing import Any, Optional
 import pyspark
-
-from sparkling_snakes.helpers.app_config import AppConfigHelper
 
 
 class PySparkHelper:
-    def __init__(self, app_config: AppConfigHelper):  # TODO: Cleanup, docs
-        self.sc: pyspark.SparkContext = None
-        self.config = app_config.get_config()
+    _instance: Optional['PySparkHelper'] = None
+    _config: Optional[dict[str, Any]] = None
+    _sc: Optional[pyspark.SparkContext] = None
 
-    def connect_to_cluster(self):  # TODO: Cleanup, docs
-        conf = pyspark.SparkConf()
-        conf.setMaster(self.config['spark']['master_uri'])
-        conf.set('spark.authenticate', False)  # TODO: add at least basic auth in the future
-        self.sc = pyspark.SparkContext(conf=conf)
+    def __new__(cls, app_config: dict[str, Any]) -> 'PySparkHelper':
+        """Ensure Singleton properties."""
+        if cls._instance is None:
+            cls._instance = super(PySparkHelper, cls).__new__(cls)
+            cls._instance._config = app_config
+            cls.get_context()
+        return cls._instance
 
-    def test_cluster_operation_primes_from_range(self, range_n: int) -> list[int]:  # TODO: remove
-        def is_prime(n):
-            for i in range(2, n):
-                if (n % i) == 0:
-                    return False
-            return True
+    @classmethod
+    def get_context(cls) -> pyspark.SparkContext:  # TODO: Cleanup
+        """Connect to config-determined PySpark cluster.
 
-        rdd = self.sc.parallelize(range(range_n), 2)
-        return rdd.filter(is_prime).collect()
+        :return: PySpark context
+        """
+        if cls._instance._sc is None:
+            conf: pyspark.SparkConf = pyspark.SparkConf()
+            conf.setMaster(cls._instance._config['spark']['master_uri'])
+            conf.set('spark.authenticate', False)  # TODO: add at least basic auth in the future
+            cls._instance._sc = pyspark.SparkContext(conf=conf)
+        return cls._instance._sc
