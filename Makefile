@@ -28,7 +28,7 @@ install:
 	$(PIP) install ./dist/sparkling_snakes*.whl --force-reinstall
 
 run:
-	uvicorn sparkling_snakes.main:app --reload --host 0.0.0.0
+	uvicorn sparkling_snakes.main:app --host 0.0.0.0
 
 test: venv
 	# TODO: Add basic unit tests
