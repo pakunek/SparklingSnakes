@@ -35,7 +35,6 @@ class FilesystemOperationsHelper:
         """
         read_imports_command: str = FilesystemOperationsHelper.readpe_get_imports_command_template.format(file_path)
         result = FilesystemOperationsHelper._run_command_if_file_exists(file_path, read_imports_command)
-
         return int(stdout) if (stdout := result.stdout) and not result.stderr else -1
 
     @staticmethod
@@ -54,7 +53,6 @@ class FilesystemOperationsHelper:
         """
         read_exports_command: str = FilesystemOperationsHelper.readpe_get_exports_command_template.format(file_path)
         result = FilesystemOperationsHelper._run_command_if_file_exists(file_path, read_exports_command)
-
         return int(stdout) if (stdout := result.stdout) and not result.stderr else -1
 
     @staticmethod
