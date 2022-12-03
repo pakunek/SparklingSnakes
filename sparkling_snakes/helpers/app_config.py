@@ -28,9 +28,7 @@ class AppConfigHelper(object):
 
         :return: None
         """
-        config_path: str = os.path.join(consts.DEFAULT_CONFIG_PATH, consts.DEFAULT_CONFIG_NAME)
-
-        if os.path.isfile(config_path):
+        if os.path.isfile(config_path:= os.path.join(consts.DEFAULT_CONFIG_PATH, consts.DEFAULT_CONFIG_NAME)):
             print(f"Loading configuration file from path: {config_path}")
             cls._instance._config = toml.load(config_path)
         else:

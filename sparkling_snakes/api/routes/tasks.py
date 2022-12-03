@@ -19,4 +19,4 @@ async def post_processor_task(task: TaskInCreate) -> TaskInResponse:
     :raises: HTTPException with 400 status code if the Task is invalid
     """
     task.validate_data()
-    return TasksService.run_task(task.n)
+    return TasksService.run_task(task)
