@@ -9,3 +9,4 @@ LOGGING_MAIN_FORMAT: str = "%(asctime)s %(message)s"
 LOGGING_DATE_FORMAT: str = "%m/%d/%Y %I:%M:%S %p"
 
 API_PREFIX: str = "/processor"
+FILE_STORAGE: str = "/tmp/s3-files"

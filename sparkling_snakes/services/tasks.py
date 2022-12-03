@@ -3,9 +3,11 @@ import math
 import boto3
 from botocore.handlers import disable_signing
 
+from sparkling_snakes import consts
 from sparkling_snakes.api.models.schemas.tasks import TaskInResponse, TaskInCreate
 from sparkling_snakes.helpers.app_config import AppConfigHelper
 from sparkling_snakes.helpers.pyspark import PySparkHelper
+
 
 # TODO: Cleanup, preferably inject/reuse helpers, split pyspark code from business logic,handle exceptions,
 # TODO: extract boto3 code to helper
@@ -42,12 +44,10 @@ class TasksService:
 
 # TODO: Move, divide onto smaller parts, wrap with classes/objects, extract common logic, think about processing tools
 # TODO: to use in all scenarios. Prepare directory for files, cleanup after processing. Finally store metadata in DB.
-# TODO: Move file storage to config and mount for docker-style app usage, add dir checks (preferably pre app load)
-# TODO: Handle exceptions
+# TODO: Add dir checks (preferably pre app load), handle exceptions
 def process_file(s3obj_key: str, task: TaskInCreate) -> None:
-    file_storage: str = '/tmp/s3-files/'
-
     s3_resource = boto3.resource(service_name='s3', region_name=task.region_name)
     s3_resource.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
 
-    s3_resource.Bucket(task.bucket_name).download_file(s3obj_key, f'{file_storage}/{s3obj_key.split("/")[-1]}')
+    file_path = f'{consts.FILE_STORAGE}/{s3obj_key.split("/")[-1]}'
+    s3_resource.Bucket(task.bucket_name).download_file(s3obj_key, file_path)

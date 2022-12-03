@@ -2,6 +2,8 @@ FROM python:3.10
 
 RUN apt update
 RUN apt install -y openjdk-11-jdk-headless
+RUN apt install -y libimage-exiftool-perl
+RUN apt install -y pev
 
 ENV SPARK_VERSION=3.3.1
 ENV HADOOP_VERSION=3
