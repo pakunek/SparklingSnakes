@@ -5,6 +5,8 @@ from pyspark import sql
 
 
 class PySparkHelper:
+    """PySpark connection helper class."""
+
     _instance: Optional['PySparkHelper'] = None
     _config: Optional[dict[str, Any]] = None
     _ss: Optional[pyspark.sql.SparkSession] = None
@@ -14,6 +16,7 @@ class PySparkHelper:
         if cls._instance is None:
             cls._instance = super(PySparkHelper, cls).__new__(cls)
             cls._instance._config = app_config
+            cls._instance._ss = None
             cls.get_session()
         return cls._instance
 

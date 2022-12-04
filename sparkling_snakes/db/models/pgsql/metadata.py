@@ -12,4 +12,4 @@ class Metadata(Base):
     path = Column(String(500), nullable=False)
     size = Column(String(100), nullable=False)
     type = Column(String(15), nullable=False)
-    arch = Column(String(3), nullable=False)
+    arch = Column(String(5), nullable=False)

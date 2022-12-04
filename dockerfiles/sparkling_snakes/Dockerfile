@@ -1,7 +1,7 @@
 FROM python:3.10
 
 RUN apt update
-RUN apt install -y openjdk-11-jdk-headless postgresql-client-common postgresql postgresql-client
+RUN apt install -y openjdk-11-jdk-headless libimage-exiftool-perl pev
 
 ENV PGPASSWORD=postgres
 

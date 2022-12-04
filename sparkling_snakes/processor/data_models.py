@@ -3,8 +3,7 @@ from dataclasses import dataclass
 from sparkling_snakes import consts
 
 
-# TODO: To be revised, might be redundant since PySpark has own DataFrames
-@dataclass(frozen=True)
+@dataclass
 class FileMetadata:
     imports: int = consts.DEFAULT_DB_INT_VALUE
     exports: int = consts.DEFAULT_DB_INT_VALUE

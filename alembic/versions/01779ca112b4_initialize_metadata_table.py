@@ -5,9 +5,8 @@ Revises:
 Create Date: 2022-12-04 13:28:51.322886
 
 """
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 revision = '01779ca112b4'
 down_revision = None
@@ -24,7 +23,7 @@ def upgrade():
         sa.Column('path', sa.String(500), nullable=False),
         sa.Column('size', sa.String(100), nullable=False),
         sa.Column('type', sa.String(15), nullable=False),
-        sa.Column('arch', sa.String(3), nullable=False),
+        sa.Column('arch', sa.String(5), nullable=False),
     )
 
 def downgrade():

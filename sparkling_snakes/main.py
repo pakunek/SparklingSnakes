@@ -14,6 +14,11 @@ log = logging.getLogger(__name__)
 
 
 def get_application() -> FastAPI:
+    """Prepare FastAPI app.
+
+    Additionally prepare the environment/common objects for future processing.
+    :return: FastAPI class instance
+    """
     config_helper: AppConfigHelper = AppConfigHelper()
     AppLoggingHelper.configure_logging(config := config_helper.get_config())
     FilesystemOperationsHelper.create_directory(consts.FILE_STORAGE)
@@ -21,6 +26,7 @@ def get_application() -> FastAPI:
 
     application: FastAPI = FastAPI(docs_url="/docs")
     application.include_router(router, prefix=API_PREFIX)
+
     log.info("Application initialized properly")
     return application
 

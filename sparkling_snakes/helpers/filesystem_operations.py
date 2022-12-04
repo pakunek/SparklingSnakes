@@ -9,6 +9,8 @@ from sparkling_snakes.processor.data_models import ExiftoolOutput
 
 
 class FilesystemOperationsHelper:
+    """File/Directory management class."""
+
     imports_command_template: str = 'readpe -i -f xml {} | grep -e "<object name=\\"Function\\">" | wc -l'
     exports_command_template: str = 'readpe -e -f xml {} | grep -e "<object name=\\"Function\\">" | wc -l'
     exiftool_command_template: str = 'exiftool -filesize# -filetypeextension -machinetype -s -s {}'

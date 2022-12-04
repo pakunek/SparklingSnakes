@@ -6,6 +6,7 @@ from sparkling_snakes import consts
 
 class AppLoggingHelper(object):
     """Logging management class."""
+
     level_mapper: dict[str, int] = {
         'DEBUG': logging.DEBUG,
         'INFO': logging.INFO,
