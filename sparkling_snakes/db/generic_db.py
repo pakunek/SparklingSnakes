@@ -2,13 +2,14 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from sparkling_snakes.processor.data_models import FileMetadata
+from sparkling_snakes.processor.types import Config
 
 
 class GenericDatabase(ABC):
     """Abstract DB operations class."""
 
     @abstractmethod
-    def init_connection(self, config: dict[str, Any]) -> None:
+    def init_connection(self, config: Config) -> None:
         """Initialize DB connection.
 
         :param config: project configuration dict

@@ -1,15 +1,16 @@
 FROM python:3.10
 
 RUN apt update
-RUN apt install -y openjdk-11-jdk-headless libimage-exiftool-perl pev
+RUN apt install -y openjdk-11-jdk-headless
 
 ENV PGPASSWORD=postgres
 
 ENV SPARK_VERSION=3.3.1
+ENV HADOOP_VERSION=3
 ENV SPARK_HOME=/opt/spark
 ENV PYTHONHASHSEED=1
 
-RUN wget --no-verbose -O apache-spark.tgz "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-without-hadoop.tgz" \
+RUN wget --no-verbose -O apache-spark.tgz "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" \
 && mkdir -p /opt/spark \
 && tar -xf apache-spark.tgz -C /opt/spark --strip-components=1 \
 && rm apache-spark.tgz

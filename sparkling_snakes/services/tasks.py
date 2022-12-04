@@ -1,18 +1,16 @@
 import math
-from typing import Any
-
-import boto3
-from botocore.handlers import disable_signing
 
 from sparkling_snakes import consts
 from sparkling_snakes.api.models.schemas.tasks import TaskInResponse, TaskInCreate
 from sparkling_snakes.helpers.app_config import AppConfigHelper
-from sparkling_snakes.helpers.filesystem_operations import FilesystemOperationsHelper
 from sparkling_snakes.helpers.pyspark import PySparkHelper
-from sparkling_snakes.processor.file_processor import FileProcessor
+from sparkling_snakes.helpers.s3_helper import S3Helper
+from sparkling_snakes.processor.data_models import S3Item
+from sparkling_snakes.processor.pyspark_functions import pyspark_file_flow
+from sparkling_snakes.utils import is_key_supported
 
 
-# TODO: Cleanup, preferably inject/reuse helpers, handle exceptions
+# TODO: Handle exceptions
 class TasksService:
     """Service for task execution."""
     @staticmethod
@@ -30,47 +28,17 @@ class TasksService:
         """
         config = AppConfigHelper().get_config()
         pyspark_helper = PySparkHelper(config)
+        pyspark_session = pyspark_helper.get_session()
 
-        ss = pyspark_helper.get_session()
+        files_per_prefix = math.floor(task.files_total / len(consts.EXPECTED_S3_PREFIXES))
 
-        s3_resource = boto3.resource(service_name='s3', region_name=task.region_name)
-        s3_resource.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
-        s3_bucket = s3_resource.Bucket(task.bucket_name)
-
-        files_per_prefix = math.floor(task.n/2)
-
-        # TODO: Handle higher n values either by builtin boto3 paging or own code
-        # TODO: Handle second set of files
-        prefix_summaries = [
-            s3obj.key for s3obj in s3_bucket.objects.filter(Prefix='0/', Marker='0/00Tree.html').limit(files_per_prefix)
-        ]
-        task_data = ss.sparkContext.parallelize(prefix_summaries)
-
-        # TODO: Cannot pickle SSLContext, hence the bucket connection needs to be re-established within task
-        # TODO: Think about a better way to do it, it seems to be redundant
-        task_data.foreach(lambda s3obj_key: pyspark_file_flow(s3obj_key, task, config))
-        return TaskInResponse(message="File(s) downloaded properly")
-
-
-# TODO: Handle exceptions
-def pyspark_file_flow(s3obj_key: str, task: TaskInCreate, config: dict[str, Any]) -> None:
-    """Run whole flow for given file.
-
-    Due to issues with pickling of i.e. SSLContext, some connections and objects
-    need to be (re)created within this function since it is destined to run under
-    PySpark environment.
-
-    :param s3obj_key: S3 Bucket key pointing to one specific PE file
-    :param task: user-given data required for connection
-    :param config: app configuration dict
-    """
-    FilesystemOperationsHelper.create_directory(consts.FILE_STORAGE)
-    file_processor = FileProcessor(s3obj_key, task.region_name, task.bucket_name)
-    file_processor.init_s3_connection()
-    file_processor.init_db_connection(config)
-    file_processor.store_s3_e_tag()
-
-    if file_processor.needs_to_be_processed():
-        file_processor.download_file()
-        file_metadata = file_processor.process()
-        file_processor.store_in_db(file_metadata)
+        for prefix in consts.EXPECTED_S3_PREFIXES:
+            for page in S3Helper.get_page_iterator(task.region_name,
+                                                   task.bucket_name,
+                                                   f'{prefix}/',
+                                                   files_per_prefix):
+                prepared_s3_items = filter(lambda x: is_key_supported(x.s3_key),
+                                           map(lambda y: S3Item(y['Key'], y['ETag']), page['Contents']))
+                task_data = pyspark_session.sparkContext.parallelize(prepared_s3_items)
+                task_data.foreach(lambda x: pyspark_file_flow(x, task, config))
+        return TaskInResponse(message="File(s) metadata stored properly")

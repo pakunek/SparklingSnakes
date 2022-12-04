@@ -1,16 +1,17 @@
 import os
-from typing import Any, Optional
+from typing import Optional
 
 import toml
 
 from sparkling_snakes import consts
+from sparkling_snakes.processor.types import Config
 
 
-class AppConfigHelper(object):
+class AppConfigHelper:
     """Configuration management class."""
 
     _instance: Optional['AppConfigHelper'] = None
-    _config: Optional[dict[str, Any]] = None
+    _config: Optional[Config] = None
 
     def __new__(cls) -> 'AppConfigHelper':
         """Ensure Singleton properties."""
@@ -38,7 +39,7 @@ class AppConfigHelper(object):
             cls._instance._config = toml.load(os.path.relpath(consts.DEFAULT_CONFIG_NAME))
 
     @classmethod
-    def get_config(cls) -> dict[str, Any]:
+    def get_config(cls) -> Config:
         """Return the preloaded configuration.
 
         :return: dict containing configuration values

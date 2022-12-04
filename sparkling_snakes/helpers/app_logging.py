@@ -1,10 +1,10 @@
 import logging
-from typing import Any
 
 from sparkling_snakes import consts
+from sparkling_snakes.processor.types import Config
 
 
-class AppLoggingHelper(object):
+class AppLoggingHelper:
     """Logging management class."""
 
     level_mapper: dict[str, int] = {
@@ -15,7 +15,7 @@ class AppLoggingHelper(object):
     }
 
     @staticmethod
-    def configure_logging(config: dict[str, Any]) -> None:
+    def configure_logging(config: Config) -> None:
         """Configure logging using project consts.
 
         :return: None

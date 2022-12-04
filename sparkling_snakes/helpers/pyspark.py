@@ -1,17 +1,19 @@
-from typing import Any, Optional
+from typing import Optional
 
 import pyspark
 from pyspark import sql
+
+from sparkling_snakes.processor.types import Config
 
 
 class PySparkHelper:
     """PySpark connection helper class."""
 
     _instance: Optional['PySparkHelper'] = None
-    _config: Optional[dict[str, Any]] = None
+    _config: Optional[Config] = None
     _ss: Optional[pyspark.sql.SparkSession] = None
 
-    def __new__(cls, app_config: dict[str, Any]) -> 'PySparkHelper':
+    def __new__(cls, app_config: Config) -> 'PySparkHelper':
         """Ensure Singleton properties."""
         if cls._instance is None:
             cls._instance = super(PySparkHelper, cls).__new__(cls)

@@ -11,6 +11,7 @@ from sparkling_snakes.db.generic_db import GenericDatabase
 from sparkling_snakes.db.models.pgsql.metadata import Metadata
 from sparkling_snakes.exceptions import DBConnectionNotInitialized
 from sparkling_snakes.processor.data_models import FileMetadata
+from sparkling_snakes.processor.types import Config
 
 log = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class PostgreSQLDatabase(GenericDatabase):
 
     _engine: sqlalchemy.engine.Engine = None
 
-    def init_connection(self, config: dict[str, Any]) -> None:
+    def init_connection(self, config: Config) -> None:
         if not self._engine:
             self._engine = create_engine(config['db']['conn_string'])
 
