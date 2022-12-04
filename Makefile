@@ -79,4 +79,4 @@ docker_down_sparkling_snakes:
 docker_down:
 	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_FILE) down
 
-.PHONY: all venv build install run test lint clean clean_build clean_pyc clean_venv docker_build docker_build_pyspark docker_build_sparkling_snakes docker_up docker_up_sparkling_snakes docker_down_sparkling_snakes docker_down
+.PHONY: all venv init_database build install_env install run test lint clean clean_build clean_pyc clean_venv docker_build docker_build_pyspark docker_build_sparkling_snakes docker_up docker_up_sparkling_snakes docker_down_sparkling_snakes docker_down
