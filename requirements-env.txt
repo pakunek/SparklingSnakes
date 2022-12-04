@@ -1,5 +1,7 @@
 setuptools==65.5.0  # virtualenv 20.16.7
 wheel==0.38.4
 uvicorn==0.20.0
+alembic==1.8.1
+sqlalchemy==1.4.44
 flake8
 mypy

@@ -13,6 +13,7 @@ class FileMetadata:
     type: str = consts.DEFAULT_DB_STR_VALUE
     arch: str = consts.DEFAULT_DB_STR_VALUE
 
+
 class ExiftoolOutput:
     file_size: str = consts.DEFAULT_DB_STR_VALUE
     file_type: str = consts.DEFAULT_DB_STR_VALUE

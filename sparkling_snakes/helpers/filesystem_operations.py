@@ -1,11 +1,11 @@
 import os
 import subprocess
-from functools import cache
+from functools import lru_cache
 from typing import Callable
 
 from sparkling_snakes import consts
+from sparkling_snakes.exceptions import InvalidFile
 from sparkling_snakes.processor.data_models import ExiftoolOutput
-from sparkling_snakes.processor.exceptions import InvalidFile
 
 
 class FilesystemOperationsHelper:
@@ -25,7 +25,7 @@ class FilesystemOperationsHelper:
         os.makedirs(directory_path, exist_ok=True)
 
     @staticmethod
-    @cache
+    @lru_cache(maxsize=consts.EXPECTED_OPERATIONS_PER_FILE)
     def file_exists(file_path: str) -> bool:
         """Check if file exists.
 
@@ -83,6 +83,7 @@ class FilesystemOperationsHelper:
         :return: file size in bytes as string
         """
         return FilesystemOperationsHelper._get_exiftool_data(file_path).file_size
+
     @staticmethod
     def get_file_type(file_path: str) -> str:
         """Get file type.
@@ -91,6 +92,7 @@ class FilesystemOperationsHelper:
         :return: file type without delimiters and whitespace as string
         """
         return FilesystemOperationsHelper._get_exiftool_data(file_path).file_type
+
     @staticmethod
     def get_architecture(file_path: str) -> str:
         """Get file architecture.
@@ -102,7 +104,7 @@ class FilesystemOperationsHelper:
 
     # TODO: Verify if caching works properly within ThreadPoolExecutioner context
     @staticmethod
-    @cache
+    @lru_cache(maxsize=len(consts.ExiftoolSupportedFields))
     def _get_exiftool_data(file_path: str) -> ExiftoolOutput:
         """Get data available through exiftool.
 
@@ -138,11 +140,11 @@ class FilesystemOperationsHelper:
 
         for line in stdout.splitlines():
             match (split_line := line.strip().split(' ', maxsplit=1))[0].rstrip(':'):
-                case consts.EXIFTOOL_FILE_SIZE_FIELD:
+                case consts.ExiftoolSupportedFields.file_size.value:
                     exiftool_output.file_size = split_line[-1]
-                case consts.EXIFTOOL_FILE_TYPE_FIELD:
+                case consts.ExiftoolSupportedFields.file_type.value:
                     exiftool_output.file_type = split_line[-1]
-                case consts.EXIFTOOL_ARCHITECTURE_FIELD:
+                case consts.ExiftoolSupportedFields.architecture.value:
                     exiftool_output.architecture = consts.EXIFTOOL_ARCHITECTURE_MAPPING.get(split_line[-1],
                                                                                             consts.DEFAULT_DB_STR_VALUE)
         return exiftool_output
@@ -159,7 +161,7 @@ class FilesystemOperationsHelper:
         """
         if not FilesystemOperationsHelper.file_exists(file_path):
             raise InvalidFile(file_path=file_path)
-        return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,universal_newlines=True, shell=True)
+        return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
 
     @staticmethod
     def _sanitize_stdout(result: subprocess.CompletedProcess | subprocess.CompletedProcess[str],

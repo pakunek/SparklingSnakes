@@ -1,7 +1,9 @@
 FROM python:3.10
 
 RUN apt update
-RUN apt install -y openjdk-11-jdk-headless
+RUN apt install -y openjdk-11-jdk-headless postgresql-client-common postgresql postgresql-client
+
+ENV PGPASSWORD=postgres
 
 COPY . /sparkling_snakes
 WORKDIR /sparkling_snakes

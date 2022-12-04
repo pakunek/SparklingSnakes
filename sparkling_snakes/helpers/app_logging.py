@@ -23,4 +23,3 @@ class AppLoggingHelper(object):
 
         logging.basicConfig(format=consts.LOGGING_MAIN_FORMAT, datefmt=consts.LOGGING_DATE_FORMAT,
                             level=AppLoggingHelper.level_mapper[config_level])
-        logging.info("Logging has been configured properly")

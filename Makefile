@@ -7,6 +7,8 @@ PACKAGE_DIR_NAME := sparkling_snakes
 DOCKER_COMPOSE := docker-compose -f
 DOCKER_COMPOSE_FILE := docker-compose.yml
 
+PG_USER := postgres
+
 VENV := venv
 
 all: venv
@@ -16,6 +18,13 @@ $(VENV)/bin/activate: requirements-env.txt
 	./$(VENV)/bin/pip install -r requirements-env.txt
 
 venv: $(VENV)/bin/activate
+
+
+# Assumes password existence in PGPASSWORD env variable
+init_database:
+	psql -h localhost -p 5432 -U $(PG_USER) -c "create database file_metadata;" || true
+	psql -h localhost -p 5432 -U $(PG_USER) -c "grant all privileges on database file_metadata to ${PG_USER};" || true
+	alembic upgrade head
 
 build: clean_build
 	$(PYTHON_BIN) setup.py sdist
@@ -30,10 +39,10 @@ install:
 run:
 	uvicorn sparkling_snakes.main:app --host 0.0.0.0
 
-test: venv
+test:
 	# TODO: Add basic unit tests
 
-lint: venv
+lint:
 	flake8 ./$(PACKAGE_DIR_NAME) ./test
 	mypy ./$(PACKAGE_DIR_NAME) --strict
 

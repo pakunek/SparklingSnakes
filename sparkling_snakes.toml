@@ -3,3 +3,7 @@ logging_level = "INFO"
 
 [spark]
 master_uri = "spark://spark-master:7077"
+
+[db]
+# switch to localhost for non-docker processor usage
+conn_string = "postgresql+psycopg2://postgres:postgres@db:5432/file_metadata"
