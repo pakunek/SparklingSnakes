@@ -13,3 +13,11 @@ FILE_STORAGE: str = "/tmp/s3-files"
 
 DEFAULT_DB_INT_VALUE: int = -1
 DEFAULT_DB_STR_VALUE: str = "<N/A>"
+
+EXIFTOOL_ARCHITECTURE_MAPPING: dict[str, str] = {
+    'AMD AMD64': 'x64',
+    'Intel 386 or later, and compatibles': 'x86'
+}
+EXIFTOOL_FILE_SIZE_FIELD: str = 'FileSize'
+EXIFTOOL_FILE_TYPE_FIELD: str = 'FileTypeExtension'
+EXIFTOOL_ARCHITECTURE_FIELD: str = 'MachineType'

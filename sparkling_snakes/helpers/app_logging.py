@@ -1,6 +1,7 @@
-from sparkling_snakes import consts
 import logging
 from typing import Any
+
+from sparkling_snakes import consts
 
 
 class AppLoggingHelper(object):

@@ -9,7 +9,7 @@ from sparkling_snakes.helpers.pyspark import PySparkHelper
 from sparkling_snakes.processor.file_processor import FileProcessor
 
 
-# TODO: Cleanup, preferably inject/reuse helpers, split pyspark code from business logic,handle exceptions.
+# TODO: Cleanup, preferably inject/reuse helpers, split pyspark code from business logic, handle exceptions
 class TasksService:
     @staticmethod
     def run_task(task: TaskInCreate) -> TaskInResponse:
