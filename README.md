@@ -27,9 +27,6 @@ Application designed to handle:
 Since application bases on the database which is initialized, it is expected from the user
 to initialize it with tools of choice. However, the simplest use case is pre-configured.
 
-
-### First use
-
 Host ports in-use:
 - 9093 (API)
     - or 8000 if it has been started without using docker
@@ -37,6 +34,8 @@ Host ports in-use:
 - 9090, 7070 (PySpark Master node)
 - 9091, 7000 (PySpark Worker A node)
 - 9092, 7001 (PySpark Worker B node)
+
+### First use
 
 1. Build docker images
     ```sh
