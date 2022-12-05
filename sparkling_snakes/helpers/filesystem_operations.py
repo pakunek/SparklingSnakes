@@ -1,7 +1,7 @@
 import os
 import subprocess
 from functools import lru_cache
-from typing import Callable
+from typing import Callable, Any
 
 from sparkling_snakes import consts
 from sparkling_snakes.exceptions import InvalidFile
@@ -168,7 +168,7 @@ class FilesystemOperationsHelper:
     @staticmethod
     def _sanitize_stdout(result: subprocess.CompletedProcess | subprocess.CompletedProcess[str],
                          return_type: Callable,
-                         default: str | int) -> str | int:
+                         default: str | int) -> Any:
         """Verify & cast output if valid.
 
         Simple method for code deduplication purposes.

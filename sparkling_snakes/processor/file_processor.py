@@ -1,4 +1,5 @@
 import logging
+from asyncio import Future
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
@@ -93,9 +94,9 @@ class FileProcessor:
         :return: FileMetadata object with all values filled
         """
         with ThreadPoolExecutor(len(self._operations)) as pool_executor:
-            operation_futures = [pool_executor.submit(self._operations[operation]['func'],
-                                                      self._operations[operation]['args'])
-                                 for operation in self._operations]
+            operation_futures: list[Future] = [pool_executor.submit(self._operations[operation]['func'],
+                                                                    self._operations[operation]['args'])
+                                               for operation in self._operations]
             final_results = dict(zip(self._operations.keys(),
                                      [operation_future.result() for operation_future in operation_futures]))
             log.info("File for key %s processed properly", self._s3_item.s3_key)

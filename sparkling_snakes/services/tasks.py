@@ -5,9 +5,8 @@ from sparkling_snakes.api.models.schemas.tasks import TaskInResponse, TaskInCrea
 from sparkling_snakes.helpers.app_config import AppConfigHelper
 from sparkling_snakes.helpers.pyspark import PySparkHelper
 from sparkling_snakes.helpers.s3_helper import S3Helper
-from sparkling_snakes.processor.data_models import S3Item
 from sparkling_snakes.processor.pyspark_functions import pyspark_file_flow
-from sparkling_snakes.utils import is_key_supported, map_and_filter_s3_objects
+from sparkling_snakes.utils import map_and_filter_s3_objects
 
 
 # TODO: Handle exceptions

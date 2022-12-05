@@ -13,7 +13,8 @@ def is_key_supported(s3_key: str) -> bool:
     """
     return any(s3_key.endswith(key_extension) for key_extension in consts.SUPPORTED_S3_KEY_EXTENSIONS)
 
-def map_and_filter_s3_objects(page_contents: dict[str, str | int]) -> list[S3Item]:
+
+def map_and_filter_s3_objects(page_contents: list[dict[str, str | int]]) -> list[S3Item]:
     """Map and filter s3 objects to S3Items.
 
     Checks if objects provided are supported by the processor and maps them

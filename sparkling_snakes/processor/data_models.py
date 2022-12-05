@@ -18,6 +18,7 @@ class ExiftoolOutput:
     file_type: str = consts.DEFAULT_DB_STR_VALUE
     architecture: str = consts.DEFAULT_DB_STR_VALUE
 
+
 @dataclass(frozen=True)
 class S3Item:
     s3_key: str
