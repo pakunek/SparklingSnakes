@@ -9,7 +9,7 @@ def is_key_supported(s3_key: str) -> bool:
     if the list grows.
 
     :param s3_key: s3_key as string
-    :return: True or False depending on existence in consts.SUPPORTED_S3_KEY_EXTENSIONS list
+    :return: True or False depending on existence in consts.UNSUPPORTED_S3_KEY_EXTENSIONS list
     """
     return not any(s3_key.lower().endswith(key_extension) for key_extension in consts.UNSUPPORTED_S3_KEY_EXTENSIONS)
 
