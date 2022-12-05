@@ -3,6 +3,7 @@ PIP := pip
 
 APP_NAME := sparkling-snakes-processor
 PACKAGE_DIR_NAME := sparkling_snakes
+TESTS_DIR_NAME := test
 
 DOCKER_COMPOSE := docker-compose -f
 DOCKER_COMPOSE_FILE := docker-compose.yml
@@ -40,7 +41,7 @@ run:
 	uvicorn sparkling_snakes.main:app --host 0.0.0.0
 
 test:
-	# TODO: Add basic unit tests
+	$(PYTHON_BIN) -m unittest discover -p 'test_*.py' -s ./$(TESTS_DIR_NAME) -v
 
 lint:
 	flake8 ./$(PACKAGE_DIR_NAME) ./test
