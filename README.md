@@ -6,7 +6,7 @@ Application designed to handle:
     - 1
 - Processing downloaded files using Python packages & shell commands (if necessary)
   - Files already processed (basing on their existence in database) **will** be skipped
-  - Files existence on local storage is not being tracked
+  - Files' existence on local storage is not being tracked
 - Storing scrapped file metadata in database of choice
 
 ## Main technology used
@@ -53,7 +53,7 @@ Host ports in-use:
 4. Make sure that your default ```python3``` and ```pip``` binaries are properly set and have
    appropriate packages installed
    - Once you have selected your interpreter and/or activated virtual environment, you
-      can install the requirements listed in requirements-env.txt file using either ```make install_env```
+      can install the requirements listed in ```requirements-env.txt``` file using either ```make install_env```
       or ```<your_pip_binary> install -r requirements-env.txt``` directly
 5. Make sure that you have appropriate DB credentials set
    - ```postgres/postgres``` on ```localhost:5432``` are the defaults
