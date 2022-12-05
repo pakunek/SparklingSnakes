@@ -3,6 +3,7 @@ from asyncio import Future
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
+import retrying as retrying
 from boto3_type_annotations.s3 import Bucket
 
 from sparkling_snakes import consts
@@ -77,13 +78,18 @@ class FileProcessor:
         self._bucket.download_file(self._s3_item.s3_key, self._local_file_path)
         log.info("File for key %s downloaded properly", self._s3_item.s3_key)
 
-    def store_in_db(self, file_metadata: FileMetadata) -> None:
+    @retrying.retry(stop_max_delay=10 * 1000, wait_fixed=2 * 1000, retry_on_result=lambda result: not result)
+    def store_in_db(self, file_metadata: FileMetadata) -> bool:
         """Store file's metadata using pre-configured DB object.
 
         :param file_metadata: dataclass containing file's metadata
+        :return: True if there was no issue while storing the data, False otherwise
         """
-        self._database.put_metadata(self._s3_item.s3_e_tag, file_metadata)
-        log.info("Stored DB entry for ETag: %s", self._s3_item.s3_e_tag)
+        if self._database.put_metadata(self._s3_item.s3_e_tag, file_metadata):
+            log.info("Stored DB entry for ETag: %s", self._s3_item.s3_e_tag)
+            return True
+        log.error("Experienced an error during the Metadata insert operation, will retry if any attempt left")
+        return False
 
     def process(self) -> FileMetadata:
         """Run all required operations in parallel.

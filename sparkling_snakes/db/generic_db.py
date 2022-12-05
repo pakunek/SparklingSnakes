@@ -23,7 +23,7 @@ class GenericDatabase(ABC):
         """
 
     @abstractmethod
-    def put_metadata(self, object_id: str, metadata_object: FileMetadata) -> None:
+    def put_metadata(self, object_id: str, metadata_object: FileMetadata) -> bool:
         """Transform and store Metadata obj in DB.
 
         :param object_id: unique ID of an object for indexing/PK purpose

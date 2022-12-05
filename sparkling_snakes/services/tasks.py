@@ -1,5 +1,8 @@
 import math
 
+import botocore.exceptions
+from fastapi import HTTPException
+
 from sparkling_snakes import consts
 from sparkling_snakes.api.models.schemas.tasks import TaskInResponse, TaskInCreate
 from sparkling_snakes.helpers.app_config import AppConfigHelper
@@ -9,7 +12,6 @@ from sparkling_snakes.processor.pyspark_functions import pyspark_file_flow
 from sparkling_snakes.utils import map_and_filter_s3_objects
 
 
-# TODO: Handle exceptions
 class TasksService:
     """Service for task execution."""
     @staticmethod
@@ -32,11 +34,16 @@ class TasksService:
         files_per_prefix = math.floor(task.files_total / len(consts.EXPECTED_S3_PREFIXES))
 
         for prefix in consts.EXPECTED_S3_PREFIXES:
-            for page in S3Helper.get_page_iterator(task.region_name,
-                                                   task.bucket_name,
-                                                   f'{prefix}/',
-                                                   files_per_prefix):
-                prepared_s3_items = map_and_filter_s3_objects(page['Contents'])
-                task_data = pyspark_session.sparkContext.parallelize(prepared_s3_items)
-                task_data.foreach(lambda x: pyspark_file_flow(x, task, config))
+            try:
+                for page in S3Helper.get_page_iterator(task.region_name,
+                                                       task.bucket_name,
+                                                       f'{prefix}/',
+                                                       files_per_prefix):
+                    prepared_s3_items = map_and_filter_s3_objects(page['Contents'])
+                    task_data = pyspark_session.sparkContext.parallelize(prepared_s3_items)
+                    task_data.foreach(lambda x: pyspark_file_flow(x, task, config))
+            except botocore.exceptions.ClientError:
+                raise HTTPException(status_code=503, detail="AWS/S3 does not work properly, cannot continue")
+            except botocore.exceptions.ParamValidationError:
+                raise HTTPException(status_code=400, detail="Provided AWS/S3 parameters are invalid")
         return TaskInResponse(message="File(s) metadata stored properly")

@@ -42,17 +42,19 @@ class PostgreSQLDatabase(GenericDatabase):
             return False
         except SQLAlchemyError:
             log.exception("Unknown error while checking %s object existence", object_id)
-        return False
+            raise
 
-    def put_metadata(self, object_id: str, metadata_object: FileMetadata) -> None:
+    def put_metadata(self, object_id: str, metadata_object: FileMetadata) -> bool:
         try:
             with self._get_session() as session:
                 db_object = self._map_file_metadata_to_db_object(object_id, metadata_object)
                 session.add(db_object)
                 session.commit()
+                log.debug("Object %s %s added to DB", object_id, metadata_object)
+                return True
         except SQLAlchemyError:
             log.exception("Unknown error while adding %s object to DB", object_id)
-        log.debug("Object %s %s added to DB", object_id, metadata_object)
+            return False
 
     def _map_file_metadata_to_db_object(self, object_id: str, metadata_object: FileMetadata) -> Any:
         return Metadata(id=object_id,
