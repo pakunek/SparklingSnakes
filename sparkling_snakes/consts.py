@@ -2,7 +2,7 @@ import os
 from enum import Enum
 
 S3_PAGE_SIZE: int = 100
-EXPECTED_S3_PREFIXES: list[str] = ['0']
+EXPECTED_S3_PREFIXES: list[str] = ['0', '1']
 SUPPORTED_S3_KEY_EXTENSIONS: list[str] = ['dll', 'exe']
 
 DEFAULT_CONFIG_PATH: str = os.path.join("/etc", "opt")

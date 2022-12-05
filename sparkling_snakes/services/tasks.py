@@ -7,7 +7,7 @@ from sparkling_snakes.helpers.pyspark import PySparkHelper
 from sparkling_snakes.helpers.s3_helper import S3Helper
 from sparkling_snakes.processor.data_models import S3Item
 from sparkling_snakes.processor.pyspark_functions import pyspark_file_flow
-from sparkling_snakes.utils import is_key_supported
+from sparkling_snakes.utils import is_key_supported, map_and_filter_s3_objects
 
 
 # TODO: Handle exceptions
@@ -37,8 +37,7 @@ class TasksService:
                                                    task.bucket_name,
                                                    f'{prefix}/',
                                                    files_per_prefix):
-                prepared_s3_items = filter(lambda x: is_key_supported(x.s3_key),
-                                           map(lambda y: S3Item(y['Key'], y['ETag']), page['Contents']))
+                prepared_s3_items = map_and_filter_s3_objects(page['Contents'])
                 task_data = pyspark_session.sparkContext.parallelize(prepared_s3_items)
                 task_data.foreach(lambda x: pyspark_file_flow(x, task, config))
         return TaskInResponse(message="File(s) metadata stored properly")
