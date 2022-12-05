@@ -31,6 +31,6 @@ class PySparkHelper:
         if cls._instance._ss is None:
             conf: pyspark.SparkConf = pyspark.SparkConf()
             conf.setMaster(cls._instance._config['spark']['master_uri'])
-            conf.set('spark.authenticate', False)  # TODO: add at least basic auth in the future
+            conf.set('spark.authenticate', 'false')  # TODO: add at least basic auth in the future
             cls._instance._ss = sql.SparkSession.builder.appName('sparkling_snakes_processor').getOrCreate()
         return cls._instance._ss

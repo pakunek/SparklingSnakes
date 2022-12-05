@@ -11,7 +11,7 @@ def is_key_supported(s3_key: str) -> bool:
     :param s3_key: s3_key as string
     :return: True or False depending on existence in consts.SUPPORTED_S3_KEY_EXTENSIONS list
     """
-    return any(s3_key.endswith(key_extension) for key_extension in consts.SUPPORTED_S3_KEY_EXTENSIONS)
+    return not any(s3_key.lower().endswith(key_extension) for key_extension in consts.UNSUPPORTED_S3_KEY_EXTENSIONS)
 
 
 def map_and_filter_s3_objects(page_contents: list[dict[str, str | int]]) -> list[S3Item]:

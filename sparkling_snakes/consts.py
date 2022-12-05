@@ -3,7 +3,7 @@ from enum import Enum
 
 S3_PAGE_SIZE: int = 100
 EXPECTED_S3_PREFIXES: list[str] = ['0', '1']
-SUPPORTED_S3_KEY_EXTENSIONS: list[str] = ['dll', 'exe']
+UNSUPPORTED_S3_KEY_EXTENSIONS: list[str] = ['html']
 
 DEFAULT_CONFIG_PATH: str = os.path.join("/etc", "opt")
 DEFAULT_CONFIG_NAME: str = "sparkling_snakes.toml"
