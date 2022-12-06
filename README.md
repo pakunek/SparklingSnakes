@@ -43,7 +43,7 @@ Host ports in-use:
     ```
 2. Create directory for storing the downloaded files (```/s3-files```):
     ```sh
-    mkdir /s3files
+    mkdir /s3-files
     ```
     - Make sure that it provides write privileges
 3. Start docker containers
